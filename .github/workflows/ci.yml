@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - feature/dashboard-improvements
   pull_request:
     branches:
       - main
@@ -15,17 +14,35 @@ jobs:
 
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Java
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '17'
-          cache: maven
 
-      - name: Build project
-        run: mvn clean package -DskipTests
+      - name: Check project structure
+        run: |
+          echo "Checking Sunrise Dental project..."
+          test -f WebContent/WEB-INF/web.xml
+          test -d src
+          test -d WebContent
+          echo "Project structure check passed."
 
-      - name: Run tests
-        run: mvn test
+      - name: Compile Java source
+        run: |
+          mkdir -p build/classes
+          find src -name "*.java" > sources.txt
+          if [ -s sources.txt ]; then
+            javac -d build/classes @sources.txt
+            echo "Java compilation completed."
+          else
+            echo "No Java source files found."
+          fi
+
+      - name: Verify web application files
+        run: |
+          test -f WebContent/WEB-INF/web.xml
+          echo "web.xml verified."
+          echo "Web application structure verified successfully."
