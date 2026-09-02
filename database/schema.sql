@@ -1,4 +1,8 @@
-CREATE DATABASE IF NOT EXISTS sunrise_dental;
+-- Always start from a clean slate. This prevents "Table already exists"
+-- errors (and the silent login failures that follow from a stale 'staff'
+-- table missing newer columns) when re-running this script.
+DROP DATABASE IF EXISTS sunrise_dental;
+CREATE DATABASE sunrise_dental;
 USE sunrise_dental;
 
 CREATE TABLE staff (
@@ -29,7 +33,21 @@ CREATE TABLE patients (
     name VARCHAR(100) NOT NULL,
     address VARCHAR(255),
     contact_number VARCHAR(20),
-    email VARCHAR(100)
+    email VARCHAR(100),
+    username VARCHAR(50) UNIQUE,
+    password VARCHAR(255)
+);
+
+-- One-time tokens for the patient-facing "Forgot password" flow, mirroring
+-- password_reset_tokens but scoped to the patients table.
+CREATE TABLE patient_reset_tokens (
+    token_id INT AUTO_INCREMENT PRIMARY KEY,
+    patient_id VARCHAR(10) NOT NULL,
+    token VARCHAR(64) UNIQUE NOT NULL,
+    expires_at TIMESTAMP NOT NULL,
+    used TINYINT(1) NOT NULL DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (patient_id) REFERENCES patients(patient_id) ON DELETE CASCADE
 );
 
 CREATE TABLE dentists (
@@ -62,6 +80,8 @@ CREATE TABLE bills (
     bill_id INT AUTO_INCREMENT PRIMARY KEY,
     appointment_number VARCHAR(10) NOT NULL,
     total_amount DECIMAL(10,2) NOT NULL,
+    paid TINYINT(1) NOT NULL DEFAULT 0,
+    paid_at TIMESTAMP NULL,
     issue_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (appointment_number) REFERENCES appointments(appointment_number)
 );
