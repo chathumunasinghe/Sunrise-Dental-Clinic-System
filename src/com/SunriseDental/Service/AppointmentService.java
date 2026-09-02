@@ -62,4 +62,36 @@ public class AppointmentService {
     public Appointment searchByNumber(String appointmentNumber) {
         return appointmentDAO.findByNumber(appointmentNumber);
     }
+
+    /**
+     * Books an appointment for a patient who is already registered and
+     * signed in through the patient portal — no new patient record is
+     * created, unlike registerAppointment() above which is used by the
+     * front desk for walk-in/phone bookings.
+     */
+    public String bookForPatient(String patientId, int dentistId, int treatmentId, Date date, String time) {
+        Patient patientRecord = patientDAO.findById(patientId);
+        if (patientRecord == null) {
+            return null;
+        }
+
+        String appointmentNumber = appointmentDAO.getNextAppointmentNumber();
+
+        Appointment appointment = new Appointment();
+        appointment.setAppointmentNumber(appointmentNumber);
+        appointment.setPatientId(patientId);
+        appointment.setDentistId(dentistId);
+        appointment.setTreatmentId(treatmentId);
+        appointment.setAppointmentDate(date);
+        appointment.setAppointmentTime(time);
+        appointment.setStatus("Scheduled");
+
+        boolean saved = appointmentDAO.save(appointment);
+        if (!saved) {
+            return null;
+        }
+
+        notificationService.sendAppointmentConfirmation(patientRecord, appointment, appointmentNumber);
+        return appointmentNumber;
+    }
 }

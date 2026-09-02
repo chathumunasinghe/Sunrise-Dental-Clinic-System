@@ -25,4 +25,19 @@ public class DentistDAO {
         }
         return dentists;
     }
+
+    public Dentist findById(int dentistId) {
+        String sql = "SELECT * FROM dentists WHERE dentist_id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, dentistId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return new Dentist(rs.getInt("dentist_id"), rs.getString("name"), rs.getString("specialization"));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }
