@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
-<%@ page import="com.SunriseDental.Model.Staff, java.util.List, java.util.Map, java.util.Set, java.util.HashSet" %>
+<%@ page import="com.SunriseDental.Model.Staff, java.util.List, java.util.Map" %>
 <%
     Staff loggedInStaff = (Staff) session.getAttribute("staff");
     if (loggedInStaff == null) { response.sendRedirect(request.getContextPath() + "/views/login.jsp"); return; }
@@ -10,14 +10,6 @@
 
     int totalPatients = patientList == null ? 0 : patientList.size();
     int totalVisits = historyList == null ? 0 : historyList.size();
-    Set<String> doctorSet = new HashSet<>();
-    Set<String> treatmentSet = new HashSet<>();
-    if (historyList != null) {
-        for (Map<String,Object> row : historyList) {
-            if (row.get("dentist_name") != null) doctorSet.add(String.valueOf(row.get("dentist_name")));
-            if (row.get("treatment_name") != null) treatmentSet.add(String.valueOf(row.get("treatment_name")));
-        }
-    }
 %>
 <!DOCTYPE html>
 <html>
@@ -34,11 +26,9 @@
     <div class="page-title">Patients</div>
     <div class="page-subtitle">A single, professional view of every patient together with their assigned doctor and treatment history.</div>
 
-    <div class="stat-grid">
-        <div class="stat-card"><div class="stat-copy"><small>Total Patients</small><strong><%= totalPatients %></strong></div><span class="stat-icon"><i class="bi bi-person-heart"></i></span></div>
+    <div class="stat-grid" style="grid-template-columns:repeat(2,minmax(0,1fr));">
+        <div class="stat-card"><div class="stat-copy"><small>Total Patients</small><strong><%= totalPatients %></strong></div><span class="stat-icon"><i class="bi bi-people"></i></span></div>
         <div class="stat-card"><div class="stat-copy"><small>Total Visits</small><strong><%= totalVisits %></strong></div><span class="stat-icon"><i class="bi bi-calendar2-check"></i></span></div>
-        <div class="stat-card"><div class="stat-copy"><small>Doctors Involved</small><strong><%= doctorSet.size() %></strong></div><span class="stat-icon"><i class="bi bi-person-badge"></i></span></div>
-        <div class="stat-card"><div class="stat-copy"><small>Treatment Types</small><strong><%= treatmentSet.size() %></strong></div><span class="stat-icon"><i class="bi bi-clipboard2-pulse"></i></span></div>
     </div>
 
     <div class="card">
@@ -51,12 +41,12 @@
             <tbody>
             <% if (patientList != null && !patientList.isEmpty()) { for (Map<String,Object> p : patientList) {
                 String name = String.valueOf(p.get("name"));
-                String initial = name.isBlank() ? "P" : name.substring(0,1).toUpperCase();
+                String patientInitial = name.isBlank() ? "P" : name.substring(0,1).toUpperCase();
                 Object lastVisit = p.get("last_visit");
                 int visits = p.get("visit_count") == null ? 0 : ((Number) p.get("visit_count")).intValue();
             %>
                 <tr>
-                    <td><span class="staff-avatar"><%= initial %></span><strong><%= name %></strong></td>
+                    <td><span class="staff-avatar"><%= patientInitial %></span><strong><%= name %></strong></td>
                     <td><span class="id-chip"><%= p.get("patient_id") %></span></td>
                     <td><%= p.get("contact_number") == null || String.valueOf(p.get("contact_number")).isBlank() ? "—" : p.get("contact_number") %></td>
                     <td><%= p.get("email") == null || String.valueOf(p.get("email")).isBlank() ? "—" : p.get("email") %></td>
