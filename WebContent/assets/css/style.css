@@ -52,6 +52,31 @@ body {
     text-align: center;
 }
 
+/* Patient / Staff segmented control on the sign-in page */
+.role-toggle {
+    display: flex;
+    background: #eef2f3;
+    border-radius: 10px;
+    padding: 4px;
+    margin-bottom: 22px;
+    gap: 4px;
+}
+.role-toggle-btn {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 9px 6px;
+    border-radius: 7px;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.15s;
+}
+.role-toggle-btn i { margin-right: 5px; }
+.role-toggle-btn.active { background: #fff; color: var(--primary-dark); box-shadow: 0 3px 10px rgba(15,155,142,.18); }
+.role-toggle-btn:hover:not(.active) { color: var(--text-dark); }
+
 .auth-card .login-logo {
     display: flex;
     flex-direction: column;
@@ -142,6 +167,31 @@ body {
 }
 .auth-links a { color: var(--primary-dark); text-decoration: none; font-weight: 600; }
 .auth-links a:hover { text-decoration: underline; }
+
+.role-toggle {
+    display: flex;
+    background: var(--primary-light);
+    border-radius: 11px;
+    padding: 4px;
+    margin-bottom: 22px;
+    gap: 4px;
+}
+.role-toggle-btn {
+    flex: 1;
+    border: none;
+    background: transparent;
+    color: var(--primary-dark);
+    font-size: 12.5px;
+    font-weight: 700;
+    padding: 9px 8px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s, box-shadow 0.15s;
+}
+.role-toggle-btn i { margin-right: 5px; }
+.role-toggle-btn.active { background: #fff; color: var(--primary-dark); box-shadow: 0 4px 10px rgba(15,155,142,.18); }
+.role-toggle-btn:not(.active):hover { background: rgba(255,255,255,0.5); }
+.auth-tab h1 { margin-top: 0; }
 
 /* Legacy alias kept so any old markup referencing .login-card still renders */
 .login-card { text-align: left; }
@@ -633,6 +683,68 @@ table.data-table tr:hover td { background: #fafcfc; }
 .staff-toolbar p { margin:3px 0 0; color:var(--text-muted); font-size:11px; }
 .table-wrap { overflow-x:auto; }
 .inline-btn { width:auto; padding:7px 12px; font-size:11px; }
+
+/* ---------- Patient portal ---------- */
+.doctor-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:18px; }
+.doctor-card { background:#fff; border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--card-shadow); padding:24px 22px; text-align:center; }
+.doctor-card .doctor-avatar { width:64px; height:64px; border-radius:50%; margin:0 auto 14px; display:grid; place-items:center; background:var(--primary-light); color:var(--primary-dark); font-size:26px; font-weight:800; }
+.doctor-card h3 { margin:0 0 4px; font-size:16px; color:var(--navy); }
+.doctor-card p { margin:0 0 16px; font-size:12.5px; color:var(--text-muted); }
+
+.booking-summary { background:var(--primary-light); border-radius:12px; padding:16px 18px; margin-bottom:20px; font-size:13px; color:var(--primary-dark); display:flex; align-items:center; gap:12px; }
+.booking-summary i { font-size:22px; }
+
+.pay-summary { background:var(--primary-light); border-radius:12px; padding:20px; margin-bottom:22px; }
+.pay-summary .pay-amount { font-size:30px; font-weight:800; color:var(--primary-dark); }
+.pay-summary .pay-row { display:flex; justify-content:space-between; font-size:12.5px; color:var(--text-muted); padding:4px 0; }
+.card-fields { display:grid; grid-template-columns: 2fr 1fr 1fr; gap:14px; }
+@media (max-width: 600px) { .card-fields { grid-template-columns:1fr; } }
+.paid-badge { display:inline-flex; align-items:center; gap:6px; color:var(--success); font-weight:700; font-size:13px; }
+
+/* Lightweight top nav for the patient portal (no sidebar, public-facing feel) */
+.patient-topbar {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color:#fff; padding:14px 28px; display:flex; align-items:center; justify-content:space-between;
+    box-shadow:0 2px 12px rgba(0,0,0,.1);
+}
+.patient-topbar .brand { display:flex; align-items:center; gap:10px; font-weight:700; font-size:16px; }
+.patient-topbar .brand .icon-circle { background:rgba(255,255,255,.18); color:#fff; width:38px; height:38px; }
+.patient-topbar .brand .icon-circle .icon { width:20px; height:20px; }
+.patient-topbar nav { display:flex; align-items:center; gap:4px; }
+.patient-topbar nav a { color:rgba(255,255,255,.92); text-decoration:none; font-size:13px; padding:8px 14px; border-radius:8px; transition:background .15s; }
+.patient-topbar nav a:hover, .patient-topbar nav a.active { background:rgba(255,255,255,.16); }
+.patient-topbar nav a.logout { background:rgba(255,255,255,.14); margin-left:10px; }
+.patient-page-wrapper { max-width:1000px; margin:32px auto; padding:0 20px; }
+
+/* ---------- Report revenue bars ---------- */
+.revenue-bar-track { background:#eef2f3; border-radius:999px; height:8px; width:100%; margin-top:6px; overflow:hidden; }
+.revenue-bar-fill { background:linear-gradient(135deg, var(--primary), var(--accent)); height:100%; border-radius:999px; }
+
+/* Clickable dashboard stat cards */
+a.stat-card { text-decoration:none; color:inherit; transition:transform .15s, box-shadow .15s; }
+a.stat-card:hover { transform:translateY(-2px); box-shadow:0 12px 26px rgba(15,41,58,.09); }
+.status-form { display:inline-flex; align-items:center; gap:6px; }
+.status-select { font-size:11px; padding:5px 6px; border-radius:7px; border:1.5px solid #e2e8f0; }
+.status-update-btn { border:none; background:var(--primary-light); color:var(--primary-dark); font-size:11px; font-weight:700; padding:5px 10px; border-radius:7px; cursor:pointer; }
+.status-update-btn:hover { background:var(--primary); color:#fff; }
+
+/* ---------- Patient portal ---------- */
+.doctor-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:18px; }
+.doctor-card { background:#fff; border:1px solid var(--line); border-radius:14px; padding:22px; box-shadow:0 7px 20px rgba(15,41,58,.045); text-align:center; }
+.doctor-avatar { width:64px; height:64px; border-radius:50%; margin:0 auto 12px; display:grid; place-items:center; background:var(--primary-light); color:var(--primary-dark); font-size:26px; font-weight:800; }
+.doctor-card h3 { margin:0 0 4px; font-size:15px; color:var(--navy); }
+.doctor-card p { margin:0 0 16px; font-size:12px; color:var(--text-muted); }
+
+.appt-list { display:flex; flex-direction:column; gap:12px; }
+.appt-row { border:1px solid var(--line); border-radius:12px; padding:16px 18px; display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap; }
+.appt-row .appt-main strong { display:block; font-size:13.5px; color:var(--navy); }
+.appt-row .appt-main small { color:var(--text-muted); font-size:11.5px; }
+.appt-actions { display:flex; align-items:center; gap:10px; }
+
+.payment-card { max-width:440px; margin:0 auto; }
+.payment-amount { text-align:center; padding:18px; background:var(--primary-light); border-radius:12px; margin-bottom:20px; }
+.payment-amount small { display:block; color:var(--primary-dark); font-weight:700; text-transform:uppercase; font-size:10.5px; letter-spacing:.05em; }
+.payment-amount strong { display:block; font-size:26px; color:var(--navy); margin-top:6px; }
 
 @media (max-width: 1000px) {
     .stat-grid { grid-template-columns:repeat(2,1fr); }

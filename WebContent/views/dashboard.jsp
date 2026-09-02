@@ -15,6 +15,13 @@
     if (activeStaff == null) activeStaff = 0;
     if (todayRevenue == null) todayRevenue = 0.0;
     String displayName = loggedInStaff.getFullName() == null || loggedInStaff.getFullName().isBlank() ? loggedInStaff.getUsername() : loggedInStaff.getFullName();
+    String dashCtx = request.getContextPath();
+
+    // Each stat card links to the page it summarizes; some are admin-only,
+    // so those fall back to a sensible page a GUEST can actually reach.
+    String patientsHref = admin ? dashCtx + "/managePatients" : dashCtx + "/views/registerAppointment.jsp";
+    String revenueHref = admin ? dashCtx + "/reports" : dashCtx + "/views/billing.jsp";
+    String staffHref = admin ? dashCtx + "/manageStaff" : null;
 %>
 <!DOCTYPE html>
 <html>
@@ -25,6 +32,14 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/style.css" />
+    <style>
+        a.stat-card { text-decoration:none; color:inherit; transition:transform .15s, box-shadow .15s; }
+        a.stat-card:hover { transform:translateY(-3px); box-shadow:0 12px 24px rgba(15,41,58,.10); }
+        .status-form { display:flex; align-items:center; gap:6px; }
+        .status-form select { font-size:11px; padding:5px 6px; border-radius:7px; border:1.5px solid #e2e8f0; }
+        .status-form button { border:none; background:var(--primary-light); color:var(--primary-dark); border-radius:7px; padding:5px 9px; font-size:11px; font-weight:700; cursor:pointer; }
+        .status-form button:hover { background:var(--primary); color:#fff; }
+    </style>
 </head>
 <body>
 <%@ include file="includes/topbar.jsp" %>
@@ -40,10 +55,14 @@
     <% if (request.getAttribute("error") != null) { %><div class="alert alert-error"><%= request.getAttribute("error") %></div><% } %>
 
     <div class="stat-grid">
-        <div class="stat-card"><div class="stat-copy"><small>Today's Appointments</small><strong><%= todayAppointments %></strong></div><span class="stat-icon"><i class="bi bi-calendar2-check"></i></span></div>
-        <div class="stat-card"><div class="stat-copy"><small>Total Patients</small><strong><%= totalPatients %></strong></div><span class="stat-icon"><i class="bi bi-person-heart"></i></span></div>
-        <div class="stat-card"><div class="stat-copy"><small>Today's Revenue</small><strong style="font-size:19px;">LKR <%= String.format("%,.0f", todayRevenue) %></strong></div><span class="stat-icon"><i class="bi bi-cash-stack"></i></span></div>
-        <div class="stat-card"><div class="stat-copy"><small>Active Staff</small><strong><%= activeStaff %></strong></div><span class="stat-icon"><i class="bi bi-people"></i></span></div>
+        <a class="stat-card" href="${pageContext.request.contextPath}/views/searchAppointment.jsp"><div class="stat-copy"><small>Today's Appointments</small><strong><%= todayAppointments %></strong></div><span class="stat-icon"><i class="bi bi-calendar2-check"></i></span></a>
+        <a class="stat-card" href="<%= patientsHref %>"><div class="stat-copy"><small>Total Patients</small><strong><%= totalPatients %></strong></div><span class="stat-icon"><i class="bi bi-people"></i></span></a>
+        <a class="stat-card" href="<%= revenueHref %>"><div class="stat-copy"><small>Today's Revenue</small><strong style="font-size:19px;">LKR <%= String.format("%,.0f", todayRevenue) %></strong></div><span class="stat-icon"><i class="bi bi-cash-stack"></i></span></a>
+        <% if (staffHref != null) { %>
+        <a class="stat-card" href="<%= staffHref %>"><div class="stat-copy"><small>Active Staff</small><strong><%= activeStaff %></strong></div><span class="stat-icon"><i class="bi bi-person-badge"></i></span></a>
+        <% } else { %>
+        <div class="stat-card"><div class="stat-copy"><small>Active Staff</small><strong><%= activeStaff %></strong></div><span class="stat-icon"><i class="bi bi-person-badge"></i></span></div>
+        <% } %>
     </div>
 
     <div class="dashboard-grid">
@@ -54,15 +73,26 @@
                     <div class="empty-state"><i class="bi bi-calendar2"></i>No appointments are scheduled for today yet.</div>
                 <% } else { %>
                 <div class="table-wrap"><table class="schedule-table">
-                    <thead><tr><th>Time</th><th>Patient</th><th>Dentist</th><th>Treatment</th><th>Status</th></tr></thead>
+                    <thead><tr><th>Time</th><th>Patient</th><th>Status</th><th>Update</th></tr></thead>
                     <tbody>
-                    <% for (Map<String,Object> row : todaySchedule) { %>
+                    <% for (Map<String,Object> row : todaySchedule) {
+                        String status = String.valueOf(row.get("status"));
+                    %>
                         <tr>
                             <td><strong><%= row.get("appointment_time") %></strong></td>
-                            <td><%= row.get("patient_name") %><br><small style="color:#94a3b8"><%= row.get("appointment_number") %></small></td>
-                            <td><%= row.get("dentist_name") %></td>
-                            <td><%= row.get("treatment_name") %></td>
-                            <td><span class="status-badge active"><%= row.get("status") %></span></td>
+                            <td><%= row.get("patient_name") %><br><small style="color:#94a3b8">&nbsp;<%= row.get("appointment_number") %></small></td>
+                            <td><span class="status-badge active"><%= status %></span></td>
+                            <td>
+                                <form class="status-form" action="${pageContext.request.contextPath}/updateAppointmentStatus" method="post">
+                                    <input type="hidden" name="appointmentNumber" value="<%= row.get("appointment_number") %>" />
+                                    <select name="status">
+                                        <option value="Scheduled" <%= "Scheduled".equalsIgnoreCase(status) ? "selected" : "" %>>Scheduled</option>
+                                        <option value="Completed" <%= "Completed".equalsIgnoreCase(status) ? "selected" : "" %>>Completed (met doctor)</option>
+                                        <option value="Cancelled" <%= "Cancelled".equalsIgnoreCase(status) ? "selected" : "" %>>Cancelled</option>
+                                    </select>
+                                    <button type="submit">Save</button>
+                                </form>
+                            </td>
                         </tr>
                     <% } %>
                     </tbody>
