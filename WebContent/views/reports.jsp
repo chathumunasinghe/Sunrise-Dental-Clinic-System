@@ -56,21 +56,33 @@
 
         <div class="card">
             <h3 style="margin-top:0;">Revenue by Treatment Type</h3>
-            <table class="data-table">
-                <tr><th>Treatment</th><th>Total Revenue (LKR)</th></tr>
-                <%
-                    @SuppressWarnings("unchecked")
-                    Map<String, Double> revenue = (Map<String, Double>) request.getAttribute("revenueByTreatment");
-                    if (revenue != null) {
-                        for (String key : revenue.keySet()) {
-                %>
-                        <tr><td><%= key %></td><td><%= revenue.get(key) %></td></tr>
-                <%
-                        }
-                    }
-                %>
-            </table>
-            <p style="margin-top:16px; font-size:15px;"><strong>Total Revenue: LKR <%= request.getAttribute("totalRevenue") %></strong></p>
+            <%
+                @SuppressWarnings("unchecked")
+                Map<String, Double> revenue = (Map<String, Double>) request.getAttribute("revenueByTreatment");
+                Double totalRevenueObj = (Double) request.getAttribute("totalRevenue");
+                double totalRevenue = totalRevenueObj == null ? 0.0 : totalRevenueObj;
+                if (revenue == null || revenue.isEmpty()) {
+            %>
+                <p style="color: var(--text-muted);">No billed revenue yet — generate a bill from an appointment to see the breakdown here.</p>
+            <% } else { %>
+                <table class="data-table">
+                    <tr><th>Treatment</th><th>Revenue (LKR)</th><th style="width:35%;">Share of Total</th></tr>
+                    <% for (String key : revenue.keySet()) {
+                        double amount = revenue.get(key);
+                        double pct = totalRevenue > 0 ? (amount / totalRevenue) * 100 : 0;
+                    %>
+                        <tr>
+                            <td><%= key %></td>
+                            <td>LKR <%= String.format("%,.2f", amount) %></td>
+                            <td>
+                                <div class="revenue-bar-track"><div class="revenue-bar-fill" style="width:<%= String.format("%.1f", pct) %>%;"></div></div>
+                                <small style="color:var(--text-muted);"><%= String.format("%.1f", pct) %>%</small>
+                            </td>
+                        </tr>
+                    <% } %>
+                </table>
+            <% } %>
+            <p style="margin-top:16px; font-size:15px;"><strong>Total Revenue: LKR <%= String.format("%,.2f", totalRevenue) %></strong></p>
         </div>
 
         <a class="back-link" href="${pageContext.request.contextPath}/dashboard">&larr; Back to Dashboard</a>

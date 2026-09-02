@@ -6,6 +6,8 @@ import com.SunriseDental.Dao.TreatmentTypeDAO;
 import com.SunriseDental.Model.Appointment;
 import com.SunriseDental.Model.Bill;
 
+import java.util.Map;
+
 public class BillingService {
 
     private AppointmentDAO appointmentDAO = new AppointmentDAO();
@@ -32,5 +34,10 @@ public class BillingService {
         Bill bill = new Bill(appointmentNumber, fee);
         billDAO.save(bill);
         return bill;
+    }
+
+    /** Full patient/dentist/treatment details for the printed receipt. */
+    public Map<String, Object> getReceiptDetails(String appointmentNumber) {
+        return billDAO.getReceiptDetails(appointmentNumber);
     }
 }

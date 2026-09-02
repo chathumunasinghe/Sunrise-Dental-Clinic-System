@@ -8,7 +8,7 @@
     String initial = staffName.isBlank() ? "S" : staffName.substring(0,1).toUpperCase();
 
     String pageTitle = "Sunrise Dental Clinic";
-    String pageIcon = "bi-heart-pulse";
+    String pageIcon = "bi-grid-1x2";
     if (currentUri.contains("dashboard")) { pageTitle = "Dashboard"; pageIcon = "bi-grid-1x2"; }
     else if (currentUri.contains("registerAppointment")) { pageTitle = "New Appointment"; pageIcon = "bi-calendar2-plus"; }
     else if (currentUri.contains("searchAppointment")) { pageTitle = "Appointments"; pageIcon = "bi-calendar2-check"; }
@@ -20,7 +20,7 @@
 %>
 <aside class="sidebar">
     <a class="sidebar-brand" href="<%= ctx %>/dashboard">
-        <span class="brand-mark"><i class="bi bi-heart-pulse"></i></span>
+        <span class="brand-mark" style="font-size:20px;">&#129463;</span>
         <span><strong>Sunrise Dental</strong><small>Clinic Management</small></span>
     </a>
 

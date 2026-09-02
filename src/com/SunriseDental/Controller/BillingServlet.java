@@ -29,6 +29,7 @@ public class BillingServlet extends HttpServlet {
 
             if (bill != null) {
                 req.setAttribute("bill", bill);
+                req.setAttribute("receipt", billingService.getReceiptDetails(appointmentNumber.trim()));
             } else {
                 req.setAttribute("error", "Could not generate bill. Check the appointment number.");
             }

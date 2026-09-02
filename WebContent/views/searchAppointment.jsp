@@ -43,6 +43,19 @@
                     <tr><th>Time</th><td><%= a.getAppointmentTime() %></td></tr>
                     <tr><th>Status</th><td><%= a.getStatus() %></td></tr>
                 </table>
+                <form action="${pageContext.request.contextPath}/updateAppointmentStatus" method="post" style="display:flex; gap:10px; align-items:flex-end; margin-top:18px;">
+                    <input type="hidden" name="appointmentNumber" value="<%= a.getAppointmentNumber() %>" />
+                    <input type="hidden" name="returnTo" value="search" />
+                    <div class="field" style="margin-bottom:0;">
+                        <label>Update Status</label>
+                        <select name="status" class="form-select">
+                            <option value="Scheduled" <%= "Scheduled".equalsIgnoreCase(a.getStatus()) ? "selected" : "" %>>Scheduled</option>
+                            <option value="Completed" <%= "Completed".equalsIgnoreCase(a.getStatus()) ? "selected" : "" %>>Met doctor / Completed</option>
+                            <option value="Cancelled" <%= "Cancelled".equalsIgnoreCase(a.getStatus()) ? "selected" : "" %>>Cancelled</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn" style="width:auto; padding:11px 22px;">Save Status</button>
+                </form>
             </div>
         <% } %>
         <a class="back-link" href="${pageContext.request.contextPath}/dashboard">&larr; Back to Dashboard</a>
