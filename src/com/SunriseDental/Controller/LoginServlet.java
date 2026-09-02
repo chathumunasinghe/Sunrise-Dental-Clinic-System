@@ -31,6 +31,7 @@ public class LoginServlet extends HttpServlet {
         } else {
             req.setAttribute("error", "Invalid username or password.");
             req.setAttribute("username", username);
+            req.setAttribute("activeTab", "staff");
             req.getRequestDispatcher("/views/login.jsp").forward(req, resp);
         }
     }
@@ -38,6 +39,7 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
+        req.setAttribute("activeTab", "staff");
         req.getRequestDispatcher("/views/login.jsp").forward(req, resp);
     }
 }
