@@ -30,13 +30,25 @@ jobs:
           test -d WebContent
           echo "Project structure check passed."
 
+      - name: Download Jakarta Servlet API
+        run: |
+          mkdir -p build/lib
+          curl -L -o build/lib/jakarta.servlet-api.jar \
+            https://repo1.maven.org/maven2/jakarta/servlet/jakarta.servlet-api/6.0.0/jakarta.servlet-api-6.0.0.jar
+          echo "Jakarta Servlet API downloaded."
+
       - name: Compile Java source
         run: |
           mkdir -p build/classes
           find src -name "*.java" > sources.txt
+
           if [ -s sources.txt ]; then
-            javac -d build/classes @sources.txt
-            echo "Java compilation completed."
+            javac \
+              -cp "build/lib/jakarta.servlet-api.jar:WebContent/WEB-INF/lib/*" \
+              -d build/classes \
+              @sources.txt
+
+            echo "Java compilation completed successfully."
           else
             echo "No Java source files found."
           fi
@@ -46,3 +58,7 @@ jobs:
           test -f WebContent/WEB-INF/web.xml
           echo "web.xml verified."
           echo "Web application structure verified successfully."
+
+      - name: CI build completed
+        run: |
+          echo "Sunrise Dental CI build completed successfully."
