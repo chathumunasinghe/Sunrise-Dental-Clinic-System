@@ -1,6 +1,8 @@
 package com.SunriseDental.Controller;
 
 import com.SunriseDental.Dao.AppointmentDAO;
+import com.SunriseDental.Dao.NotificationDAO;
+import com.SunriseDental.Model.Appointment;
 import com.SunriseDental.Model.Staff;
 
 import jakarta.servlet.ServletException;
@@ -11,7 +13,8 @@ import java.io.IOException;
 /**
  * Lets front-desk staff — GUEST or ADMIN — update an appointment's status
  * from the dashboard or search-appointment screens, e.g. marking a visit
- * "Completed" once the patient has met the doctor.
+ * "Completed" once the patient has met the doctor. The patient sees this
+ * as an in-app notification the next time they log in.
  */
 @WebServlet("/updateAppointmentStatus")
 public class UpdateAppointmentStatusServlet extends HttpServlet {
@@ -34,7 +37,14 @@ public class UpdateAppointmentStatusServlet extends HttpServlet {
         String returnTo = req.getParameter("returnTo");
 
         if (appointmentNumber != null && status != null && ALLOWED_STATUSES.contains(status)) {
-            new AppointmentDAO().updateStatus(appointmentNumber, status);
+            AppointmentDAO appointmentDAO = new AppointmentDAO();
+            Appointment appointment = appointmentDAO.findByNumber(appointmentNumber);
+            appointmentDAO.updateStatus(appointmentNumber, status);
+
+            if (appointment != null) {
+                new NotificationDAO().create(appointment.getPatientId(), appointmentNumber,
+                        "Your appointment " + appointmentNumber + " status is now: " + status + ".");
+            }
         }
 
         if ("search".equals(returnTo)) {

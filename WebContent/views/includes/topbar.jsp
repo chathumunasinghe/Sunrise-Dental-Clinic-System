@@ -16,6 +16,7 @@
     else if (currentUri.contains("reports")) { pageTitle = "Reports"; pageIcon = "bi-bar-chart"; }
     else if (currentUri.contains("managePatients")) { pageTitle = "Patients"; pageIcon = "bi-people"; }
     else if (currentUri.contains("manageStaff")) { pageTitle = "Manage Staff"; pageIcon = "bi-person-gear"; }
+    else if (currentUri.contains("manageDoctors")) { pageTitle = "Manage Doctors"; pageIcon = "bi-person-badge"; }
     else if (currentUri.contains("help")) { pageTitle = "Help &amp; Guide"; pageIcon = "bi-life-preserver"; }
 %>
 <aside class="sidebar">
@@ -34,6 +35,7 @@
         <a class="<%= currentUri.contains("reports") ? "active" : "" %>" href="<%= ctx %>/reports"><i class="bi bi-bar-chart"></i><span>Reports</span></a>
         <a class="<%= currentUri.contains("managePatients") ? "active" : "" %>" href="<%= ctx %>/managePatients"><i class="bi bi-people"></i><span>Patients</span></a>
         <a class="<%= currentUri.contains("manageStaff") ? "active" : "" %>" href="<%= ctx %>/manageStaff"><i class="bi bi-person-gear"></i><span>Manage Staff</span></a>
+        <a class="<%= currentUri.contains("manageDoctors") ? "active" : "" %>" href="<%= ctx %>/manageDoctors"><i class="bi bi-person-badge"></i><span>Manage Doctors</span></a>
         <% } %>
     </nav>
 

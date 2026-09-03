@@ -25,6 +25,8 @@ public class StaffDAO {
         staff.setEmail(rs.getString("email"));
         staff.setRole(rs.getString("role"));
         staff.setStatus(rs.getString("status"));
+        int dentistId = rs.getInt("dentist_id");
+        staff.setDentistId(rs.wasNull() ? null : dentistId);
         return staff;
     }
 

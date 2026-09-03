@@ -92,7 +92,7 @@ public class AppointmentDAO {
         List<Map<String, Object>> list = new ArrayList<>();
         String sql = "SELECT a.appointment_number, d.name AS dentist_name, d.specialization, " +
                 "t.treatment_name, t.consultation_fee, a.appointment_date, a.appointment_time, a.status, " +
-                "b.paid AS bill_paid, b.bill_id " +
+                "a.treatment_notes, b.paid AS bill_paid, b.bill_id " +
                 "FROM appointments a " +
                 "JOIN dentists d ON a.dentist_id = d.dentist_id " +
                 "JOIN treatment_types t ON a.treatment_id = t.treatment_id " +
@@ -112,6 +112,7 @@ public class AppointmentDAO {
                     row.put("appointment_date", rs.getDate("appointment_date"));
                     row.put("appointment_time", rs.getString("appointment_time"));
                     row.put("status", rs.getString("status"));
+                    row.put("treatment_notes", rs.getString("treatment_notes"));
                     row.put("has_bill", rs.getObject("bill_id") != null);
                     row.put("paid", rs.getBoolean("bill_paid"));
                     list.add(row);
@@ -121,6 +122,30 @@ public class AppointmentDAO {
             e.printStackTrace();
         }
         return list;
+    }
+
+    /**
+     * Every appointment time already taken by a dentist on a given date
+     * (excluding cancelled ones, which free the slot back up) — used to
+     * work out which of the doctor's published hours are still open when
+     * a patient is booking.
+     */
+    public List<String> getBookedTimes(int dentistId, Date date) {
+        List<String> times = new ArrayList<>();
+        String sql = "SELECT appointment_time FROM appointments " +
+                "WHERE dentist_id = ? AND appointment_date = ? AND status <> 'Cancelled'";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, dentistId);
+            ps.setDate(2, date);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    times.add(rs.getString("appointment_time"));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return times;
     }
 
     /**
@@ -154,11 +179,69 @@ public class AppointmentDAO {
                 a.setAppointmentDate(rs.getDate("appointment_date"));
                 a.setAppointmentTime(rs.getString("appointment_time"));
                 a.setStatus(rs.getString("status"));
+                a.setTreatmentNotes(rs.getString("treatment_notes"));
                 return a;
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return null;
+    }
+
+    /**
+     * Every appointment assigned to one dentist, most recent first, with
+     * patient contact info and any treatment notes already recorded — used
+     * by the dentist's own dashboard so they only ever see their own
+     * patients, never the whole clinic's schedule.
+     */
+    public List<Map<String, Object>> getByDentistId(int dentistId) {
+        List<Map<String, Object>> list = new ArrayList<>();
+        String sql = "SELECT a.appointment_number, a.appointment_date, a.appointment_time, a.status, " +
+                "a.treatment_notes, p.patient_id, p.name AS patient_name, p.contact_number, " +
+                "p.email AS patient_email, t.treatment_name " +
+                "FROM appointments a " +
+                "JOIN patients p ON a.patient_id = p.patient_id " +
+                "JOIN treatment_types t ON a.treatment_id = t.treatment_id " +
+                "WHERE a.dentist_id = ? " +
+                "ORDER BY a.appointment_date DESC, a.appointment_time DESC";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, dentistId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Map<String, Object> row = new LinkedHashMap<>();
+                    row.put("appointment_number", rs.getString("appointment_number"));
+                    row.put("appointment_date", rs.getDate("appointment_date"));
+                    row.put("appointment_time", rs.getString("appointment_time"));
+                    row.put("status", rs.getString("status"));
+                    row.put("treatment_notes", rs.getString("treatment_notes"));
+                    row.put("patient_id", rs.getString("patient_id"));
+                    row.put("patient_name", rs.getString("patient_name"));
+                    row.put("contact_number", rs.getString("contact_number"));
+                    row.put("patient_email", rs.getString("patient_email"));
+                    row.put("treatment_name", rs.getString("treatment_name"));
+                    list.add(row);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    /**
+     * Saves a dentist's clinical notes for one appointment. The caller
+     * (DentistDashboardServlet) is responsible for verifying the appointment
+     * actually belongs to the dentist making the request before calling this.
+     */
+    public boolean updateTreatmentNotes(String appointmentNumber, String notes) {
+        String sql = "UPDATE appointments SET treatment_notes = ? WHERE appointment_number = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, notes);
+            ps.setString(2, appointmentNumber);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }

@@ -38,6 +38,9 @@
             <% if ("success".equals(request.getParameter("signup"))) { %>
                 <div class="alert alert-success">Account created! Please sign in below.</div>
             <% } %>
+            <% if ("1".equals(request.getParameter("accountDeleted"))) { %>
+                <div class="alert alert-success">Your account has been deleted. We're sorry to see you go.</div>
+            <% } %>
 
             <!-- ===================== Patient sign-in ===================== -->
             <div id="tab-patient" class="auth-tab" style="display:<%= patientTab ? "block" : "none" %>;">

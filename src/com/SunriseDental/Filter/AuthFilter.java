@@ -24,12 +24,18 @@ public class AuthFilter implements Filter {
     };
 
     private static final String[] ADMIN_ONLY_PAGES = {
-        "reports.jsp", "manageStaff.jsp", "managePatients.jsp"
+        "reports.jsp", "manageStaff.jsp", "managePatients.jsp", "manageDoctors.jsp"
     };
 
     /** Pages meant for a signed-in patient, not staff. */
     private static final String[] PATIENT_ONLY_PAGES = {
-        "patientDashboard.jsp", "doctors.jsp", "bookAppointment.jsp", "payment.jsp"
+        "patientDashboard.jsp", "doctors.jsp", "doctorProfile.jsp", "bookAppointment.jsp",
+        "payment.jsp", "myReceipt.jsp", "carePrecautions.jsp", "treatments.jsp"
+    };
+
+    /** Pages meant only for a staff account with role=DENTIST. */
+    private static final String[] DENTIST_ONLY_PAGES = {
+        "dentistDashboard.jsp"
     };
 
     @Override
@@ -67,6 +73,11 @@ public class AuthFilter implements Filter {
         }
 
         if (isOneOf(page, ADMIN_ONLY_PAGES) && !staff.isAdmin()) {
+            resp.sendRedirect(req.getContextPath() + (staff.isDentist() ? "/dentistDashboard" : "/dashboard"));
+            return;
+        }
+
+        if (isOneOf(page, DENTIST_ONLY_PAGES) && !staff.isDentist()) {
             resp.sendRedirect(req.getContextPath() + "/dashboard");
             return;
         }

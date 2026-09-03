@@ -318,6 +318,7 @@ nav a i.bi, .topbar nav a i.bi {
 .role-badge.guest { background: rgba(255,255,255,0.18); color: #fff; }
 .role-badge.solid-admin { background: #fef3c7; color: #92400e; }
 .role-badge.solid-guest { background: var(--primary-light); color: var(--primary-dark); }
+.role-badge.solid-dentist { background: #ede9fe; color: #6d28d9; }
 
 .status-badge {
     font-size: 11px;
@@ -637,6 +638,7 @@ table.data-table tr:hover td { background: #fafcfc; }
 .topbar-role-badge { box-shadow:0 2px 8px rgba(15,41,58,.06); }
 .topbar-role-badge.solid-admin { background:#fef3c7; color:#92400e; }
 .topbar-role-badge.solid-guest { background:var(--primary-light); color:var(--primary-dark); }
+.topbar-role-badge.solid-dentist { background:#ede9fe; color:#6d28d9; }
 
 .page-wrapper {
     max-width:none !important;
@@ -714,6 +716,15 @@ table.data-table tr:hover td { background: #fafcfc; }
 .patient-topbar nav a { color:rgba(255,255,255,.92); text-decoration:none; font-size:13px; padding:8px 14px; border-radius:8px; transition:background .15s; }
 .patient-topbar nav a:hover, .patient-topbar nav a.active { background:rgba(255,255,255,.16); }
 .patient-topbar nav a.logout { background:rgba(255,255,255,.14); margin-left:10px; }
+.patient-topbar nav a.bell-link { position: relative; padding: 8px 12px; }
+.patient-topbar nav a.bell-link .bell-badge {
+    position: absolute; top: 2px; right: 2px;
+    background: #ef4444; color: #fff;
+    font-size: 10px; font-weight: 700;
+    min-width: 16px; height: 16px; border-radius: 999px;
+    display: flex; align-items: center; justify-content: center;
+    padding: 0 3px; line-height: 1;
+}
 .patient-page-wrapper { max-width:1000px; margin:32px auto; padding:0 20px; }
 
 /* ---------- Report revenue bars ---------- */

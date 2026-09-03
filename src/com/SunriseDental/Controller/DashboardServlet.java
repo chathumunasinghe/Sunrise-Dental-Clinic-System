@@ -19,6 +19,10 @@ public class DashboardServlet extends HttpServlet {
             resp.sendRedirect(req.getContextPath() + "/views/login.jsp");
             return;
         }
+        if (staff.isDentist()) {
+            resp.sendRedirect(req.getContextPath() + "/dentistDashboard");
+            return;
+        }
 
         DashboardDAO dao = new DashboardDAO();
         req.setAttribute("todayAppointments", dao.getTodayAppointments());

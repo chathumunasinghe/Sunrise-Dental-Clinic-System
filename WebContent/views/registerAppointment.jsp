@@ -1,4 +1,8 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
+<%@ page import="com.SunriseDental.Dao.DentistDAO, com.SunriseDental.Model.Dentist, java.util.List" %>
+<%
+    List<Dentist> activeDentists = new DentistDAO().getActiveDentists();
+%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -56,8 +60,9 @@
                     <div class="field">
                         <label>Dentist</label>
                         <select name="dentistId" class="form-select" required>
-                            <option value="1">Dr. Perera - General Dentistry</option>
-                            <option value="2">Dr. Silva - Orthodontics</option>
+                            <% if (activeDentists != null) { for (Dentist d : activeDentists) { %>
+                                <option value="<%= d.getDentistId() %>"><%= d.getName() %> - <%= d.getSpecialization() == null || d.getSpecialization().isBlank() ? "General Dentistry" : d.getSpecialization() %></option>
+                            <% }} %>
                         </select>
                     </div>
                     <div class="field">

@@ -10,6 +10,7 @@ public class Appointment {
     private Date appointmentDate;
     private String appointmentTime;
     private String status;
+    private String treatmentNotes;
 
     public Appointment() {}
 
@@ -33,4 +34,7 @@ public class Appointment {
 
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
+
+    public String getTreatmentNotes() { return treatmentNotes; }
+    public void setTreatmentNotes(String treatmentNotes) { this.treatmentNotes = treatmentNotes; }
 }

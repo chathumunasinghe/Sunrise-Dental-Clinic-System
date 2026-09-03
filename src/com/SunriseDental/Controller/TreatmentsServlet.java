@@ -1,6 +1,6 @@
 package com.SunriseDental.Controller;
 
-import com.SunriseDental.Dao.DentistDAO;
+import com.SunriseDental.Dao.TreatmentTypeDAO;
 import com.SunriseDental.Model.Patient;
 
 import jakarta.servlet.ServletException;
@@ -8,9 +8,13 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import java.io.IOException;
 
-/** Patient-facing "Meet our Doctors" listing, the entry point for booking an appointment. */
-@WebServlet("/doctors")
-public class DoctorsServlet extends HttpServlet {
+/**
+ * Patient-facing "Treatments & Prices" page — lets a patient see the
+ * clinic's treatment list and consultation fees before booking, instead
+ * of only discovering the price once they're on the booking form.
+ */
+@WebServlet("/treatments")
+public class TreatmentsServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     @Override
@@ -22,8 +26,7 @@ public class DoctorsServlet extends HttpServlet {
             return;
         }
 
-        DentistDAO dentistDAO = new DentistDAO();
-        req.setAttribute("dentists", dentistDAO.getActiveDentists());
-        req.getRequestDispatcher("/views/doctors.jsp").forward(req, resp);
+        req.setAttribute("treatmentTypes", new TreatmentTypeDAO().getAllTreatmentTypes());
+        req.getRequestDispatcher("/views/treatments.jsp").forward(req, resp);
     }
 }

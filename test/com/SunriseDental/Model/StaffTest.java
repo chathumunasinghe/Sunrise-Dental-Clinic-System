@@ -27,6 +27,24 @@ public class StaffTest {
     }
 
     @Test
+    void testIsDentist_TrueForDentistRole() {
+        Staff s = new Staff();
+        s.setRole("DENTIST");
+        s.setDentistId(1);
+        assertTrue(s.isDentist());
+        assertFalse(s.isAdmin());
+        assertEquals(1, s.getDentistId());
+    }
+
+    @Test
+    void testIsReceptionist_TrueForGuestRole() {
+        Staff s = new Staff();
+        s.setRole("GUEST");
+        assertTrue(s.isReceptionist());
+        assertFalse(s.isDentist());
+    }
+
+    @Test
     void testSettersAndGetters() {
         Staff s = new Staff();
         s.setStaffId(1);

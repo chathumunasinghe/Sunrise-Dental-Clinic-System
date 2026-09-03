@@ -20,6 +20,10 @@
         <div class="page-title">Meet Our Doctors</div>
         <div class="page-subtitle">Choose a doctor to book your appointment</div>
 
+        <% if ("1".equals(request.getParameter("unavailable"))) { %>
+            <div class="alert alert-error">That doctor is not currently accepting new appointments. Please choose another doctor below.</div>
+        <% } %>
+
         <div class="doctor-grid">
             <% if (dentists != null) { for (Dentist d : dentists) {
                 String initial = d.getName() == null || d.getName().isBlank() ? "D" : d.getName().replace("Dr.", "").trim().substring(0,1).toUpperCase();
@@ -28,9 +32,14 @@
                     <div class="doctor-avatar"><%= initial %></div>
                     <h3><%= d.getName() %></h3>
                     <p><%= d.getSpecialization() == null || d.getSpecialization().isBlank() ? "General Dentistry" : d.getSpecialization() %></p>
-                    <a class="btn" href="${pageContext.request.contextPath}/bookAppointment?dentistId=<%= d.getDentistId() %>">
-                        <i class="bi bi-calendar-plus"></i> Book Appointment
-                    </a>
+                    <div style="display:flex; gap:8px; justify-content:center; flex-wrap:wrap;">
+                        <a class="btn btn-secondary" style="width:auto; padding:10px 16px;" href="${pageContext.request.contextPath}/doctorProfile?dentistId=<%= d.getDentistId() %>">
+                            <i class="bi bi-person-lines-fill"></i> View Profile
+                        </a>
+                        <a class="btn" style="width:auto; padding:10px 16px;" href="${pageContext.request.contextPath}/bookAppointment?dentistId=<%= d.getDentistId() %>">
+                            <i class="bi bi-calendar-plus"></i> Book Appointment
+                        </a>
+                    </div>
                 </div>
             <% }} %>
         </div>
