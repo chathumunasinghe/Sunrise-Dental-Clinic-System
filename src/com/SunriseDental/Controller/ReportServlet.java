@@ -37,13 +37,14 @@ public class ReportServlet extends HttpServlet {
         ReportService reportService = new ReportService();
 
         String dateParam = req.getParameter("date");
-        if (dateParam != null && !dateParam.trim().isEmpty()) {
-            try {
-                req.setAttribute("dailyAppointments", reportService.getDailyAppointmentReport(Date.valueOf(dateParam.trim())));
-                req.setAttribute("selectedDate", dateParam.trim());
-            } catch (IllegalArgumentException e) {
-                req.setAttribute("error", "Please choose a valid date.");
-            }
+        if (dateParam == null || dateParam.trim().isEmpty()) {
+            dateParam = java.time.LocalDate.now().toString();
+        }
+        try {
+            req.setAttribute("dailyAppointments", reportService.getDailyAppointmentReport(Date.valueOf(dateParam.trim())));
+            req.setAttribute("selectedDate", dateParam.trim());
+        } catch (IllegalArgumentException e) {
+            req.setAttribute("error", "Please choose a valid date.");
         }
 
         req.setAttribute("revenueByTreatment", reportService.getRevenueByTreatmentReport());

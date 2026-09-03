@@ -6,8 +6,9 @@ public class Staff {
     private String password;
     private String fullName;
     private String email;
-    private String role;   // "ADMIN" or "GUEST"
+    private String role;   // "ADMIN", "GUEST" (receptionist), or "DENTIST"
     private String status; // "ACTIVE" or "DISABLED"
+    private Integer dentistId; // only set when role="DENTIST" — links to dentists.dentist_id
 
     public Staff() {}
 
@@ -32,5 +33,10 @@ public class Staff {
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
 
+    public Integer getDentistId() { return dentistId; }
+    public void setDentistId(Integer dentistId) { this.dentistId = dentistId; }
+
     public boolean isAdmin() { return "ADMIN".equalsIgnoreCase(role); }
+    public boolean isDentist() { return "DENTIST".equalsIgnoreCase(role); }
+    public boolean isReceptionist() { return "GUEST".equalsIgnoreCase(role); }
 }

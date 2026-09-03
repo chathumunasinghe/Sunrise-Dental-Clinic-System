@@ -39,13 +39,9 @@ public class PaymentServlet extends HttpServlet {
             return;
         }
 
-        BillDAO billDAO = new BillDAO();
-        Bill bill = billDAO.findByAppointmentNumber(appointmentNumber);
+        Bill bill = new BillDAO().findByAppointmentNumber(appointmentNumber);
         req.setAttribute("appointment", appointment);
         req.setAttribute("bill", bill);
-        if (bill != null) {
-            req.setAttribute("receipt", billDAO.getReceiptDetails(appointmentNumber));
-        }
         req.getRequestDispatcher("/views/payment.jsp").forward(req, resp);
     }
 
@@ -72,7 +68,6 @@ public class PaymentServlet extends HttpServlet {
 
         req.setAttribute("appointment", appointment);
         req.setAttribute("bill", billDAO.findByAppointmentNumber(appointmentNumber));
-        req.setAttribute("receipt", billDAO.getReceiptDetails(appointmentNumber));
         req.setAttribute("paymentSuccess", true);
         req.getRequestDispatcher("/views/payment.jsp").forward(req, resp);
     }

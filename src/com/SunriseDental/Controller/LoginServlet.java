@@ -19,6 +19,8 @@ public class LoginServlet extends HttpServlet {
 
         String username = req.getParameter("username");
         String password = req.getParameter("password");
+        if (username != null) username = username.trim();
+        if (password != null) password = password.trim();
 
         StaffDAO staffDAO = new StaffDAO();
         Staff staff = staffDAO.validateLogin(username, password);
@@ -27,7 +29,7 @@ public class LoginServlet extends HttpServlet {
             HttpSession session = req.getSession();
             session.setAttribute("staff", staff);
             session.setAttribute("role", staff.getRole());
-            resp.sendRedirect(req.getContextPath() + "/dashboard");
+            resp.sendRedirect(req.getContextPath() + (staff.isDentist() ? "/dentistDashboard" : "/dashboard"));
         } else {
             req.setAttribute("error", "Invalid username or password.");
             req.setAttribute("username", username);

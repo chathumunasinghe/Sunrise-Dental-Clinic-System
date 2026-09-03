@@ -26,6 +26,9 @@
     <div class="page-title">Patients</div>
     <div class="page-subtitle">A single, professional view of every patient together with their assigned doctor and treatment history.</div>
 
+    <% if (request.getParameter("message") != null) { %><div class="alert alert-success"><%= request.getParameter("message") %></div><% } %>
+    <% if (request.getParameter("error") != null) { %><div class="alert alert-error"><%= request.getParameter("error") %></div><% } %>
+
     <div class="stat-grid" style="grid-template-columns:repeat(2,minmax(0,1fr));">
         <div class="stat-card"><div class="stat-copy"><small>Total Patients</small><strong><%= totalPatients %></strong></div><span class="stat-icon"><i class="bi bi-people"></i></span></div>
         <div class="stat-card"><div class="stat-copy"><small>Total Visits</small><strong><%= totalVisits %></strong></div><span class="stat-icon"><i class="bi bi-calendar2-check"></i></span></div>
@@ -37,7 +40,7 @@
             <div class="table-search"><i class="bi bi-search"></i><input type="text" id="patientSearch" placeholder="Search by name, ID or contact..." onkeyup="filterTable('patientSearch','patientTable')" /></div>
         </div>
         <div class="table-wrap"><table class="data-table" id="patientTable">
-            <thead><tr><th>Patient</th><th>Patient ID</th><th>Contact Number</th><th>Email</th><th>Address</th><th>Visits</th><th>Last Visit</th></tr></thead>
+            <thead><tr><th>Patient</th><th>Patient ID</th><th>Contact Number</th><th>Email</th><th>Address</th><th>Visits</th><th>Last Visit</th><th>Action</th></tr></thead>
             <tbody>
             <% if (patientList != null && !patientList.isEmpty()) { for (Map<String,Object> p : patientList) {
                 String name = String.valueOf(p.get("name"));
@@ -53,8 +56,17 @@
                     <td><%= p.get("address") == null || String.valueOf(p.get("address")).isBlank() ? "—" : p.get("address") %></td>
                     <td><span class="status-badge <%= visits > 0 ? "active" : "neutral" %>"><%= visits %> visit<%= visits == 1 ? "" : "s" %></span></td>
                     <td><%= lastVisit == null ? "No visits yet" : lastVisit %></td>
+                    <td>
+                        <form action="${pageContext.request.contextPath}/deletePatient" method="post" style="display:inline"
+                              onsubmit="return confirm('Delete patient <%= name.replace("'", "") %> (<%= p.get("patient_id") %>)? This permanently removes their appointment and billing history and cannot be undone.');">
+                            <input type="hidden" name="patientId" value="<%= p.get("patient_id") %>">
+                            <button class="btn btn-danger inline-btn" type="submit">
+                                <i class="bi bi-trash3"></i> Delete
+                            </button>
+                        </form>
+                    </td>
                 </tr>
-            <% }} else { %><tr><td colspan="7" style="text-align:center;color:#94a3b8;padding:28px">No patients found.</td></tr><% } %>
+            <% }} else { %><tr><td colspan="8" style="text-align:center;color:#94a3b8;padding:28px">No patients found.</td></tr><% } %>
             </tbody>
         </table></div>
     </div>

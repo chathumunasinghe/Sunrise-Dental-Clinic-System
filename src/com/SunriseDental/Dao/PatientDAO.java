@@ -25,14 +25,55 @@ public class PatientDAO {
     }
 
     public boolean save(Patient patient) {
-        String sql = "INSERT INTO patients (patient_id, name, address, contact_number, email) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO patients (patient_id, name, address, contact_number, email, username, password) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, patient.getPatientId());
             ps.setString(2, patient.getName());
             ps.setString(3, patient.getAddress());
             ps.setString(4, patient.getContactNumber());
             ps.setString(5, patient.getEmail());
+            ps.setString(6, patient.getUsername());
+            ps.setString(7, patient.getPassword());
             return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * Best-effort lookup used by the front-desk "New Appointment" flow:
+     * if staff leaves "Existing Patient ID" blank, we still try to match
+     * the person to an existing patient record by contact number before
+     * creating a brand-new one. Without this, a patient who already has a
+     * portal login could end up with a second, login-less record — and
+     * any appointment booked against that second record would never show
+     * up under "My Appointments" when they log in, only ever reaching
+     * them as an outgoing email/SMS notification.
+     */
+    public Patient findByContact(String contactNumber) {
+        if (contactNumber == null || contactNumber.isBlank()) return null;
+        String sql = "SELECT * FROM patients WHERE contact_number = ? ORDER BY patient_id DESC LIMIT 1";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, contactNumber.trim());
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return mapRow(rs);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /** True if the given contact number already has a portal login (username set). */
+    public boolean hasPortalLogin(String patientId) {
+        String sql = "SELECT username FROM patients WHERE patient_id = ? AND username IS NOT NULL";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, patientId);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
@@ -221,6 +262,76 @@ public class PatientDAO {
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
+        }
+    }
+
+    /** True if the given plaintext password matches this patient's stored password. */
+    public boolean checkPassword(String patientId, String password) {
+        String sql = "SELECT 1 FROM patients WHERE patient_id = ? AND password = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, patientId);
+            ps.setString(2, password);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * Permanently deletes a patient and everything tied to their record —
+     * their bills, then their appointments, then the patient row itself
+     * (notifications and password-reset tokens fall away on their own via
+     * ON DELETE CASCADE). Bills and appointments have no such cascade in
+     * the schema, so they're deleted first in that order inside one
+     * transaction: deleting appointments before their bills would violate
+     * the bills -> appointments foreign key, and a failure partway through
+     * must not leave the patient half-deleted. Used by both the admin
+     * "Patients" screen and a patient's own "Delete my account".
+     */
+    public boolean deletePatientCascade(String patientId) {
+        String deleteBills = "DELETE b FROM bills b " +
+                "JOIN appointments a ON b.appointment_number = a.appointment_number " +
+                "WHERE a.patient_id = ?";
+        String deleteAppointments = "DELETE FROM appointments WHERE patient_id = ?";
+        String deletePatient = "DELETE FROM patients WHERE patient_id = ?";
+
+        boolean originalAutoCommit = true;
+        try {
+            originalAutoCommit = conn.getAutoCommit();
+            conn.setAutoCommit(false);
+
+            try (PreparedStatement ps1 = conn.prepareStatement(deleteBills)) {
+                ps1.setString(1, patientId);
+                ps1.executeUpdate();
+            }
+            try (PreparedStatement ps2 = conn.prepareStatement(deleteAppointments)) {
+                ps2.setString(1, patientId);
+                ps2.executeUpdate();
+            }
+            boolean deleted;
+            try (PreparedStatement ps3 = conn.prepareStatement(deletePatient)) {
+                ps3.setString(1, patientId);
+                deleted = ps3.executeUpdate() > 0;
+            }
+            conn.commit();
+            return deleted;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            try {
+                conn.rollback();
+            } catch (SQLException rollbackEx) {
+                rollbackEx.printStackTrace();
+            }
+            return false;
+        } finally {
+            try {
+                conn.setAutoCommit(originalAutoCommit);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 

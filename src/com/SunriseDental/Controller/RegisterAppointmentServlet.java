@@ -45,12 +45,24 @@ public class RegisterAppointmentServlet extends HttpServlet {
         }
 
         AppointmentService service = new AppointmentService();
-        String appointmentNumber = service.registerAppointment(
+        AppointmentService.RegistrationResult result = service.registerAppointmentDetailed(
                 patientId, name, address, contact, email, dentistId, treatmentId, date, time);
 
-        if (appointmentNumber != null) {
-            req.setAttribute("message", "Appointment registered successfully. Number: " + appointmentNumber
-                    + ". A confirmation has been sent to the patient.");
+        if (result != null) {
+            StringBuilder msg = new StringBuilder("Appointment registered successfully. Number: ")
+                    .append(result.appointmentNumber).append(". A confirmation has been sent to the patient.");
+            if (result.generatedUsername != null) {
+                msg.append(" This is a new patient — a portal login was created for them: username \"")
+                        .append(result.generatedUsername).append("\", temporary password \"")
+                        .append(result.generatedPassword)
+                        .append("\". Please share these with the patient so they can log in and see this appointment themselves.");
+            } else if (result.matchedExistingPatient) {
+                msg.append(" Matched to existing patient ").append(result.patientId)
+                        .append(result.alreadyHadPortalLogin
+                                ? " — they can already see this in their portal login."
+                                : " — note: this patient does not have a portal login yet.");
+            }
+            req.setAttribute("message", msg.toString());
         } else {
             req.setAttribute("error", "Registration failed. Please check the details entered.");
         }

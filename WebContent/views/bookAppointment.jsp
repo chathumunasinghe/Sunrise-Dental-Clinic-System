@@ -49,11 +49,15 @@
                 <div class="form-row">
                     <div class="field">
                         <label>Appointment Date</label>
-                        <input type="date" class="form-control" name="date" required />
+                        <input type="date" class="form-control" name="date" id="dateInput"
+                               value="<%= request.getParameter("date") == null ? "" : request.getParameter("date") %>" required />
                     </div>
                     <div class="field">
                         <label>Appointment Time</label>
-                        <input type="time" class="form-control" name="time" required />
+                        <select class="form-select" name="time" id="timeSelect" required disabled>
+                            <option value="">Select a date first</option>
+                        </select>
+                        <small id="slotHint" style="color:var(--text-muted); display:block; margin-top:4px;"></small>
                     </div>
                 </div>
                 <button type="submit" class="btn"><i class="bi bi-calendar-check"></i> Confirm &amp; Continue to Payment</button>
@@ -61,5 +65,78 @@
         </div>
         <a class="back-link" href="${pageContext.request.contextPath}/doctors">&larr; Back to Doctors</a>
     </div>
+
+    <script>
+    (function () {
+        var ctx = "${pageContext.request.contextPath}";
+        var dentistId = <%= dentist == null ? "null" : dentist.getDentistId() %>;
+        var preselectedTime = "<%= request.getParameter("time") == null ? "" : request.getParameter("time") %>";
+        var dateInput = document.getElementById('dateInput');
+        var timeSelect = document.getElementById('timeSelect');
+        var hint = document.getElementById('slotHint');
+
+        // Never let a patient pick a date that's already passed.
+        var today = new Date().toISOString().split('T')[0];
+        dateInput.setAttribute('min', today);
+
+        function setPlaceholder(text, disabled) {
+            timeSelect.innerHTML = '';
+            var opt = document.createElement('option');
+            opt.value = '';
+            opt.textContent = text;
+            timeSelect.appendChild(opt);
+            timeSelect.disabled = disabled;
+        }
+
+        function formatTime(hhmm) {
+            var parts = hhmm.split(':');
+            var h = parseInt(parts[0], 10);
+            var m = parts[1];
+            var ampm = h >= 12 ? 'PM' : 'AM';
+            var h12 = h % 12;
+            if (h12 === 0) h12 = 12;
+            return h12 + ':' + m + ' ' + ampm;
+        }
+
+        function loadSlots() {
+            var date = dateInput.value;
+            hint.textContent = '';
+            if (!dentistId || !date) {
+                setPlaceholder('Select a date first', true);
+                return;
+            }
+            setPlaceholder('Loading available times…', true);
+
+            fetch(ctx + '/availableSlots?dentistId=' + dentistId + '&date=' + date)
+                .then(function (r) { return r.json(); })
+                .then(function (data) {
+                    timeSelect.innerHTML = '';
+                    if (data.slots && data.slots.length > 0) {
+                        timeSelect.disabled = false;
+                        var placeholder = document.createElement('option');
+                        placeholder.value = '';
+                        placeholder.textContent = 'Choose a time';
+                        timeSelect.appendChild(placeholder);
+                        data.slots.forEach(function (slot) {
+                            var o = document.createElement('option');
+                            o.value = slot;
+                            o.textContent = formatTime(slot);
+                            if (slot === preselectedTime) o.selected = true;
+                            timeSelect.appendChild(o);
+                        });
+                    } else {
+                        setPlaceholder('No times available', true);
+                    }
+                    if (data.message) hint.textContent = data.message;
+                })
+                .catch(function () {
+                    setPlaceholder('Could not load times — try again', true);
+                });
+        }
+
+        dateInput.addEventListener('change', loadSlots);
+        if (dateInput.value) loadSlots();
+    })();
+    </script>
 </body>
 </html>

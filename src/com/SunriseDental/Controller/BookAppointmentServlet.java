@@ -5,6 +5,7 @@ import com.SunriseDental.Dao.TreatmentTypeDAO;
 import com.SunriseDental.Model.Dentist;
 import com.SunriseDental.Model.Patient;
 import com.SunriseDental.Service.AppointmentService;
+import com.SunriseDental.Service.AvailabilityService;
 import com.SunriseDental.Service.BillingService;
 
 import jakarta.servlet.ServletException;
@@ -43,6 +44,10 @@ public class BookAppointmentServlet extends HttpServlet {
             resp.sendRedirect(req.getContextPath() + "/doctors");
             return;
         }
+        if (!dentist.isActive()) {
+            resp.sendRedirect(req.getContextPath() + "/doctors?unavailable=1");
+            return;
+        }
 
         req.setAttribute("dentist", dentist);
         req.setAttribute("treatmentTypes", new TreatmentTypeDAO().getAllTreatmentTypes());
@@ -71,6 +76,29 @@ public class BookAppointmentServlet extends HttpServlet {
             req.setAttribute("error", "Please choose a valid treatment, date, and time.");
             req.setAttribute("dentist", new DentistDAO().findById(
                     tryParse(req.getParameter("dentistId"))));
+            req.setAttribute("treatmentTypes", new TreatmentTypeDAO().getAllTreatmentTypes());
+            req.getRequestDispatcher("/views/bookAppointment.jsp").forward(req, resp);
+            return;
+        }
+
+        Dentist dentist = new DentistDAO().findById(dentistId);
+        if (dentist == null || !dentist.isActive()) {
+            req.setAttribute("error", "This doctor is not currently accepting new appointments.");
+            req.setAttribute("dentist", dentist);
+            req.setAttribute("treatmentTypes", new TreatmentTypeDAO().getAllTreatmentTypes());
+            req.getRequestDispatcher("/views/bookAppointment.jsp").forward(req, resp);
+            return;
+        }
+
+        // Re-check the chosen slot against the doctor's real availability
+        // (their working hours minus anything already booked) instead of
+        // trusting whatever time the client submitted — this is what
+        // actually stops two patients from double-booking the same slot.
+        AvailabilityService.DayAvailability availability =
+                new AvailabilityService().getAvailability(dentist, date.toLocalDate());
+        if (!availability.workingDay || time == null || !availability.slots.contains(time)) {
+            req.setAttribute("error", "That time is no longer available. Please pick another slot.");
+            req.setAttribute("dentist", dentist);
             req.setAttribute("treatmentTypes", new TreatmentTypeDAO().getAllTreatmentTypes());
             req.getRequestDispatcher("/views/bookAppointment.jsp").forward(req, resp);
             return;

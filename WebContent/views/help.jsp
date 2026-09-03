@@ -25,6 +25,7 @@
                 <li>Check <strong>Reports</strong> for daily appointment lists and revenue by treatment type.</li>
                 <li>Admins can open <strong>Patients</strong> to see the full patient directory alongside every doctor and treatment record in one place.</li>
                 <li>Admins can open <strong>Manage Staff</strong> to create accounts, enable/disable logins, or permanently delete an account.</li>
+                <li>Admins can open <strong>Manage Doctors</strong> to enable/disable a doctor's availability for new patient bookings.</li>
                 <li>Click <strong>Logout</strong> to safely end your session when finished.</li>
             </ol>
         </div>
