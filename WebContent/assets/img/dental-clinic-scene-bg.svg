@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="wallGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#dff3f0"/>
+      <stop offset="55%" stop-color="#bfe6e0"/>
+      <stop offset="100%" stop-color="#9fd6cd"/>
+    </linearGradient>
+    <linearGradient id="floorGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#e8f6f2"/>
+      <stop offset="100%" stop-color="#cdeae3"/>
+    </linearGradient>
+    <radialGradient id="lampGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.95"/>
+      <stop offset="55%" stop-color="#eaf7ff" stop-opacity="0.55"/>
+      <stop offset="100%" stop-color="#eaf7ff" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="chairGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#d7e8e5"/>
+    </linearGradient>
+    <linearGradient id="metalGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#b9c6c8"/>
+      <stop offset="100%" stop-color="#7f9698"/>
+    </linearGradient>
+    <linearGradient id="tealAccent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2dd4bf"/>
+      <stop offset="100%" stop-color="#0f9b8e"/>
+    </linearGradient>
+  </defs>
+
+  <!-- room -->
+  <rect width="1600" height="640" fill="url(#wallGrad)"/>
+  <rect y="640" width="1600" height="360" fill="url(#floorGrad)"/>
+  <rect y="636" width="1600" height="10" fill="#8fc9bd" opacity="0.5"/>
+
+  <!-- large soft window with light -->
+  <rect x="120" y="90" width="360" height="440" rx="18" fill="#ffffff" opacity="0.35"/>
+  <rect x="120" y="90" width="360" height="440" rx="18" fill="none" stroke="#ffffff" stroke-opacity="0.6" stroke-width="10"/>
+  <rect x="120" y="300" width="360" height="10" fill="#ffffff" opacity="0.5"/>
+  <rect x="296" y="90" width="10" height="440" fill="#ffffff" opacity="0.5"/>
+
+  <!-- overhead dental exam light -->
+  <circle cx="900" cy="150" r="150" fill="url(#lampGlow)"/>
+  <ellipse cx="900" cy="150" rx="120" ry="34" fill="#eef7f7" stroke="#c7d9d7" stroke-width="4"/>
+  <ellipse cx="900" cy="150" rx="70" ry="20" fill="#ffffff"/>
+  <rect x="892" y="182" width="16" height="90" fill="url(#metalGrad)"/>
+  <rect x="850" y="266" width="100" height="14" rx="7" fill="url(#metalGrad)"/>
+
+  <!-- dental chair -->
+  <g>
+    <!-- base column -->
+    <rect x="860" y="700" width="90" height="46" rx="10" fill="url(#metalGrad)"/>
+    <ellipse cx="905" cy="748" rx="120" ry="18" fill="#a9bdbb" opacity="0.5"/>
+    <rect x="884" y="600" width="42" height="110" rx="12" fill="url(#metalGrad)"/>
+
+    <!-- seat base -->
+    <rect x="740" y="560" width="330" height="60" rx="20" fill="url(#chairGrad)" stroke="#c3d8d4" stroke-width="3"/>
+    <!-- backrest, reclined -->
+    <path d="M760 560 C740 470 780 400 900 380 C1020 400 1040 470 1050 560 Z" fill="url(#chairGrad)" stroke="#c3d8d4" stroke-width="3"/>
+    <!-- headrest -->
+    <ellipse cx="895" cy="378" rx="70" ry="30" fill="url(#chairGrad)" stroke="#c3d8d4" stroke-width="3"/>
+    <!-- armrests -->
+    <rect x="700" y="540" width="70" height="26" rx="12" fill="url(#chairGrad)" stroke="#c3d8d4" stroke-width="2"/>
+    <rect x="1030" y="540" width="70" height="26" rx="12" fill="url(#chairGrad)" stroke="#c3d8d4" stroke-width="2"/>
+  </g>
+
+  <!-- side instrument tray on an arm -->
+  <g>
+    <rect x="1150" y="470" width="10" height="140" fill="url(#metalGrad)"/>
+    <rect x="1100" y="450" width="180" height="30" rx="8" fill="#eef7f7" stroke="#c7d9d7" stroke-width="3"/>
+    <circle cx="1130" cy="465" r="6" fill="url(#tealAccent)"/>
+    <circle cx="1160" cy="465" r="6" fill="url(#tealAccent)"/>
+    <circle cx="1190" cy="465" r="6" fill="url(#tealAccent)"/>
+    <rect x="1230" y="455" width="40" height="20" rx="4" fill="#dfeceb"/>
+  </g>
+
+  <!-- cabinet with cross/tooth motif, right side -->
+  <g>
+    <rect x="1330" y="480" width="230" height="220" rx="14" fill="#ffffff" opacity="0.85" stroke="#cfe4e0" stroke-width="3"/>
+    <rect x="1355" y="510" width="180" height="60" rx="8" fill="#eaf6f4"/>
+    <rect x="1355" y="585" width="180" height="60" rx="8" fill="#eaf6f4"/>
+    <circle cx="1345" cy="540" r="5" fill="url(#tealAccent)"/>
+    <circle cx="1345" cy="615" r="5" fill="url(#tealAccent)"/>
+  </g>
+
+  <!-- potted plant, left, near window -->
+  <g fill="#2f7d6b" opacity="0.9">
+    <path d="M170 700 C145 650 145 590 170 545 C195 590 195 650 170 700 Z"/>
+    <path d="M170 700 C205 660 218 610 208 560 C230 610 224 660 198 700 Z"/>
+    <path d="M170 700 C135 660 122 610 132 560 C110 610 116 660 142 700 Z"/>
+  </g>
+  <rect x="146" y="698" width="48" height="46" rx="8" fill="#c98a5a"/>
+
+  <!-- large soft tooth watermark, bottom centre, barely visible -->
+  <g transform="translate(755,840) scale(1.1)" opacity="0.10">
+    <path d="M140 0 C60 0 10 55 10 120 C10 175 30 205 42 250 C50 282 55 320 76 320
+             C96 320 100 260 140 260 C180 260 184 320 204 320 C225 320 230 282 238 250
+             C250 205 270 175 270 120 C270 55 220 0 140 0 Z" fill="#0b7a70"/>
+  </g>
+</svg>

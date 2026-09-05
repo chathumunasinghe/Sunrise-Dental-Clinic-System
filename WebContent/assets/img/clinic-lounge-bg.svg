@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="sky" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1b3a4b"/>
+      <stop offset="38%" stop-color="#3d5f68"/>
+      <stop offset="62%" stop-color="#c98a5a"/>
+      <stop offset="100%" stop-color="#f3c98a"/>
+    </linearGradient>
+    <radialGradient id="sun" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffe8c2" stop-opacity="0.95"/>
+      <stop offset="55%" stop-color="#f0b46a" stop-opacity="0.55"/>
+      <stop offset="100%" stop-color="#f0b46a" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="floor" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0e2a35"/>
+      <stop offset="100%" stop-color="#173c48"/>
+    </linearGradient>
+    <linearGradient id="goldGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f6d9a3"/>
+      <stop offset="100%" stop-color="#c98a3d"/>
+    </linearGradient>
+  </defs>
+
+  <!-- sky / warm gradient backdrop -->
+  <rect width="1600" height="1000" fill="url(#sky)"/>
+  <circle cx="1180" cy="330" r="260" fill="url(#sun)"/>
+
+  <!-- reflective floor -->
+  <rect x="0" y="640" width="1600" height="360" fill="url(#floor)"/>
+  <rect x="0" y="640" width="1600" height="60" fill="#f3c98a" opacity="0.12"/>
+
+  <!-- soft bokeh lights, warm tones -->
+  <g opacity="0.55">
+    <circle cx="220" cy="180" r="46" fill="#ffe4b8"/>
+    <circle cx="360" cy="120" r="20" fill="#ffe4b8"/>
+    <circle cx="1360" cy="150" r="34" fill="#ffe4b8"/>
+    <circle cx="1470" cy="260" r="18" fill="#ffe4b8"/>
+    <circle cx="90" cy="420" r="14" fill="#ffe4b8"/>
+    <circle cx="1500" cy="470" r="26" fill="#ffe4b8"/>
+  </g>
+
+  <!-- distant archway silhouettes (spa / clinic lounge feel) -->
+  <g fill="#0c2733" opacity="0.75">
+    <path d="M0 640 L0 300 Q150 150 300 300 L300 640 Z"/>
+    <path d="M1300 640 L1300 260 Q1450 100 1600 260 L1600 640 Z"/>
+  </g>
+
+  <!-- lounge chairs (evokes the reference's poolside loungers, here reimagined as a calm clinic waiting area) -->
+  <g fill="#0a222c" opacity="0.85">
+    <rect x="360" y="560" width="230" height="26" rx="13"/>
+    <rect x="380" y="500" width="70" height="70" rx="14"/>
+    <rect x="360" y="586" width="18" height="54" rx="6"/>
+    <rect x="572" y="586" width="18" height="54" rx="6"/>
+
+    <rect x="1010" y="560" width="230" height="26" rx="13"/>
+    <rect x="1030" y="500" width="70" height="70" rx="14"/>
+    <rect x="1010" y="586" width="18" height="54" rx="6"/>
+    <rect x="1222" y="586" width="18" height="54" rx="6"/>
+  </g>
+
+  <!-- potted plant silhouettes -->
+  <g fill="#0a222c" opacity="0.85">
+    <path d="M120 560 C90 500 90 430 120 380 C150 430 150 500 120 560 Z"/>
+    <path d="M120 560 C160 510 175 450 165 390 C185 450 180 510 150 560 Z"/>
+    <path d="M120 560 C80 510 65 450 75 390 C55 450 60 510 90 560 Z"/>
+    <rect x="98" y="558" width="44" height="40" rx="6"/>
+
+    <path d="M1500 560 C1470 500 1470 430 1500 380 C1530 430 1530 500 1500 560 Z"/>
+    <rect x="1478" y="558" width="44" height="40" rx="6"/>
+  </g>
+
+  <!-- calm water / reflection strip -->
+  <rect x="0" y="760" width="1600" height="6" fill="url(#goldGlow)" opacity="0.5"/>
+
+  <!-- subtle dental brand watermark, bottom center, barely visible -->
+  <g transform="translate(755,830) scale(1.05)" opacity="0.10">
+    <path d="M140 0 C60 0 10 55 10 120 C10 175 30 205 42 250 C50 282 55 320 76 320
+             C96 320 100 260 140 260 C180 260 184 320 204 320 C225 320 230 282 238 250
+             C250 205 270 175 270 120 C270 55 220 0 140 0 Z" fill="#ffe8c2"/>
+  </g>
+</svg>

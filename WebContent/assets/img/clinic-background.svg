@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="sky" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0b7a70"/>
+      <stop offset="45%" stop-color="#14b8a6"/>
+      <stop offset="75%" stop-color="#5eead4"/>
+      <stop offset="100%" stop-color="#f2e8c9"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="78%" cy="24%" r="45%">
+      <stop offset="0%" stop-color="#fff3d6" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#fff3d6" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="heavyBlur" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="55"/>
+    </filter>
+    <filter id="medBlur" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="28"/>
+    </filter>
+  </defs>
+
+  <rect width="1600" height="1000" fill="url(#sky)"/>
+  <rect width="1600" height="1000" fill="url(#glow)"/>
+
+  <!-- soft floating bokeh-style light blobs -->
+  <g filter="url(#heavyBlur)">
+    <circle cx="1180" cy="230" r="180" fill="#ffffff" opacity="0.18"/>
+    <circle cx="260" cy="700" r="220" fill="#0b7a70" opacity="0.35"/>
+    <circle cx="900" cy="820" r="260" fill="#0f9b8e" opacity="0.30"/>
+    <circle cx="1400" cy="700" r="200" fill="#ffe9b8" opacity="0.25"/>
+  </g>
+
+  <!-- blurred horizontal "window/furniture line" shapes for depth, like out-of-focus interior -->
+  <g filter="url(#medBlur)" opacity="0.28">
+    <rect x="0" y="560" width="1600" height="14" fill="#ffffff"/>
+    <rect x="0" y="640" width="1600" height="10" fill="#ffffff"/>
+    <rect x="60" y="600" width="420" height="140" rx="18" fill="#e8f7f4"/>
+    <rect x="1120" y="600" width="420" height="140" rx="18" fill="#e8f7f4"/>
+  </g>
+
+  <!-- blurred plant-frond silhouettes in the corners, echoing a resort/lounge photo -->
+  <g filter="url(#medBlur)" fill="#064e46" opacity="0.55">
+    <path d="M0,1000 C40,860 120,760 40,640 C160,720 210,830 150,1000 Z"/>
+    <path d="M120,1000 C180,880 260,820 220,700 C320,780 340,900 300,1000 Z"/>
+    <path d="M1600,1000 C1540,850 1460,780 1560,660 C1440,740 1400,880 1460,1000 Z"/>
+    <path d="M1460,1000 C1400,900 1340,850 1380,740 C1280,820 1270,930 1320,1000 Z"/>
+  </g>
+
+  <!-- faint water-reflection style horizontal bands near the bottom -->
+  <g filter="url(#medBlur)" opacity="0.20">
+    <rect x="0" y="860" width="1600" height="6" fill="#ffffff"/>
+    <rect x="0" y="900" width="1600" height="4" fill="#ffffff"/>
+    <rect x="0" y="935" width="1600" height="8" fill="#ffffff"/>
+  </g>
+
+  <rect width="1600" height="1000" fill="#04231f" opacity="0.12"/>
+</svg>
